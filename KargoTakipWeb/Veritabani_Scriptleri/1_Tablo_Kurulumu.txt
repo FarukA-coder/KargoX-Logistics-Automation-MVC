@@ -1,0 +1,87 @@
+﻿-- KargoX Veritabanı Tablo Kurulum Scriptleri (DDL)
+
+CREATE TABLE Musteriler (
+    MusteriID INT PRIMARY KEY IDENTITY(1,1),
+    TC_No VARCHAR(11) UNIQUE,
+    Ad VARCHAR(50),
+    Soyad VARCHAR(50),
+    Telefon VARCHAR(15),
+    Adres VARCHAR(250),
+    E_Posta VARCHAR(50)
+);
+
+CREATE TABLE Subeler (
+    SubeID INT PRIMARY KEY IDENTITY(1,1),
+    SubeAdi VARCHAR(100),
+    SubeTuru VARCHAR(50),
+    Il VARCHAR(50),
+    Ilce VARCHAR(50),
+    Adres VARCHAR(250)
+);
+
+CREATE TABLE Araclar (
+    AracID INT PRIMARY KEY IDENTITY(1,1),
+    Plaka VARCHAR(20),
+    Kapasite_KG DECIMAL,
+    KayitliOlduguSubeID INT FOREIGN KEY REFERENCES Subeler(SubeID)
+);
+
+CREATE TABLE Personeller (
+    PersonelID INT PRIMARY KEY IDENTITY(1,1),
+    CalistigiSubeID INT FOREIGN KEY REFERENCES Subeler(SubeID),
+    Ad VARCHAR(50),
+    Soyad VARCHAR(50),
+    Gorevi VARCHAR(50),
+    KullaniciAdi VARCHAR(50),
+    Sifre VARCHAR(50)
+);
+
+CREATE TABLE Kargolar (
+    KargoID INT PRIMARY KEY IDENTITY(1,1),
+    GondericiID INT FOREIGN KEY REFERENCES Musteriler(MusteriID),
+    AliciID INT FOREIGN KEY REFERENCES Musteriler(MusteriID),
+    CikisSubeID INT FOREIGN KEY REFERENCES Subeler(SubeID),
+    VarisSubeID INT FOREIGN KEY REFERENCES Subeler(SubeID),
+    TakipKodu VARCHAR(50) UNIQUE,
+    Desi DECIMAL,
+    Agirlik DECIMAL,
+    KargoTipi VARCHAR(50),
+    OlusturmaTarihi DATETIME
+);
+
+CREATE TABLE KargoDurumTanimi (
+    DurumID INT PRIMARY KEY,
+    DurumAdi VARCHAR(50)
+);
+
+CREATE TABLE KargoHareketleri (
+    HareketID INT PRIMARY KEY IDENTITY(1,1),
+    KargoID INT FOREIGN KEY REFERENCES Kargolar(KargoID),
+    IslemSubeID INT FOREIGN KEY REFERENCES Subeler(SubeID),
+    IslemPersonelID INT FOREIGN KEY REFERENCES Personeller(PersonelID),
+    DurumID INT FOREIGN KEY REFERENCES KargoDurumTanimi(DurumID),
+    IslemTarihi DATETIME,
+    Aciklama VARCHAR(250)
+);
+
+CREATE TABLE Teslimatlar (
+    TeslimatID INT PRIMARY KEY IDENTITY(1,1),
+    KargoID INT FOREIGN KEY REFERENCES Kargolar(KargoID),
+    TeslimEdenPersonelID INT FOREIGN KEY REFERENCES Personeller(PersonelID),
+    AracID INT FOREIGN KEY REFERENCES Araclar(AracID),
+    TeslimAlanKisi VARCHAR(100),
+    TeslimZamani DATETIME,
+    Kanit_Foto_Yolu VARCHAR(250)
+);
+
+CREATE TABLE Faturalar (
+    FaturaID INT PRIMARY KEY IDENTITY(1,1),
+    KargoID INT FOREIGN KEY REFERENCES Kargolar(KargoID),
+    KesenPersonelID INT FOREIGN KEY REFERENCES Personeller(PersonelID),
+    FaturaTarihi DATETIME,
+    Tutar_Net DECIMAL,
+    KDV_Orani DECIMAL,
+    Toplam_Tutar DECIMAL,
+    OdemeTuru VARCHAR(50),
+    OdemeDurumu VARCHAR(50)
+);

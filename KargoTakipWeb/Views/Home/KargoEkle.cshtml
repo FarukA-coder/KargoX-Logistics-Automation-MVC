@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Yeni Kargo Oluştur";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <h3 class="mb-0 fw-bold">📦 Yeni Kargo Oluştur</h3>
+            </div>
+            <div class="card-body p-4 bg-white">
+                <form asp-action="KargoEkle" method="post">
+
+                    <h5 class="text-secondary border-bottom pb-2 mb-3">Müşteri Bilgileri</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Gönderici Seçin</label>
+                            <select name="GondericiID" asp-items="ViewBag.Musteriler" class="form-select" required>
+                                <option value="">-- Gönderici Seç --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Alıcı Seçin</label>
+                            <select name="AliciID" asp-items="ViewBag.Musteriler" class="form-select" required>
+                                <option value="">-- Alıcı Seç --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h5 class="text-secondary border-bottom pb-2 mb-3 mt-4">Lojistik Rotası</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Çıkış Şubesi</label>
+                            <select name="CikisSubeID" asp-items="ViewBag.Subeler" class="form-select" required>
+                                <option value="">-- Çıkış Şubesi Seç --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Varış Şubesi</label>
+                            <select name="VarisSubeID" asp-items="ViewBag.Subeler" class="form-select" required>
+                                <option value="">-- Varış Şubesi Seç --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h5 class="text-secondary border-bottom pb-2 mb-3 mt-4">Kargo Detayları</h5>
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Kargo Tipi</label>
+                            <select name="KargoTipi" class="form-select" required>
+                                <option value="Standart Paket">Standart Paket</option>
+                                <option value="Evrak">Evrak / Zarf</option>
+                                <option value="Koli">Büyük Koli</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Desi (Hacim)</label>
+                            <input type="number" step="0.1" name="Desi" class="form-control" placeholder="Örn: 2.5" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Ağırlık (KG)</label>
+                            <input type="number" step="0.1" name="Agirlik" class="form-control" placeholder="Örn: 1.2" required />
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg fw-bold shadow-sm">
+                            ✅ Sistemi Güncelle ve Kargo Oluştur
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

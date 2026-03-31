@@ -1,0 +1,45 @@
+﻿@model List<KargoTakipWeb.Models.SubeIstatistikViewModel>
+
+@{
+    ViewData["Title"] = "Şube Raporları";
+}
+
+<div class="mt-4">
+    <h2 class="text-secondary fw-bold border-bottom pb-2">📊 Şube Performans Raporları</h2>
+    <p class="text-muted">Bu sayfa veritabanından anlık (canlı) olarak beslenmektedir.</p>
+
+    <div class="row mt-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow border-0">
+                <div class="card-header bg-dark text-warning fw-bold fs-5">
+                    Şube Gelir ve Çıkış İstatistikleri
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped table-hover mb-0 text-center align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Şube Adı</th>
+                                <th>Çıkarılan Kargo Sayısı</th>
+                                <th>Toplam Ciro (TL)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="text-start fw-bold text-primary">🏢 @item.SubeAdi</td>
+                                    <td>
+                                        <span class="badge bg-secondary fs-6">@item.ToplamKargoSayisi Adet</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-success fw-bold fs-5">@item.ToplamCiro.ToString("N2") ₺</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

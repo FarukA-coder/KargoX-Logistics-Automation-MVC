@@ -1,0 +1,58 @@
+﻿@model List<KargoTakipWeb.Models.KargoHareketViewModel>
+
+@{
+    ViewData["Title"] = "Kargom Nerede?";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-4 text-primary fw-bold">📦 Kargom Nerede?</h1>
+    <p class="lead text-muted">Kargonuzun anlık durumunu öğrenmek için takip kodunuzu girin.</p>
+
+    <form method="post" class="mt-4">
+        <div class="input-group mb-3 w-50 mx-auto shadow-sm">
+            <input type="text" name="takipKodu" class="form-control form-control-lg" placeholder="Örn: TR-IST-KST-001" required>
+            <button class="btn btn-primary btn-lg px-4" type="submit">Sorgula</button>
+        </div>
+    </form>
+</div>
+
+@if (Model != null)
+{
+    <hr class="my-5" />
+    <h3 class="mb-4 text-secondary">Takip Sonuçları: <span class="text-danger">@ViewBag.ArananKod</span></h3>
+
+    if (Model.Count > 0)
+    {
+        <div class="table-responsive shadow rounded">
+            <table class="table table-bordered table-striped table-hover text-center align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tarih / Saat</th>
+                        <th>İşlem Yeri (Şube)</th>
+                        <th>İşlemi Yapan Personel</th>
+                        <th>Durum</th>
+                        <th>Detay / Açıklama</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><strong>@item.IslemZamani.ToString("dd.MM.yyyy HH:mm")</strong></td>
+                            <td>@item.IslemYeri</td>
+                            <td>@item.IslemYapanPersonel</td>
+                            <td><span class="badge bg-info text-dark fs-6">@item.KargoDurumu</span></td>
+                            <td class="text-start">@item.Aciklama</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center shadow-sm fs-5" role="alert">
+            <strong>Üzgünüz!</strong> Girdiğiniz takip koduna ait hiçbir hareket bulunamadı. Lütfen kodu kontrol edin.
+        </div>
+    }
+}

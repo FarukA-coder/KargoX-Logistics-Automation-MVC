@@ -1,0 +1,65 @@
+﻿-- KargoX İleri Düzey Veritabanı Nesneleri (View, Procedure, Trigger)
+
+-- =======================================================
+-- 1. SANAL TABLO (VIEW): Kargo Genel Durum Ekranı
+-- =======================================================
+CREATE VIEW vw_KargoGenelDurum AS
+SELECT
+    K.TakipKodu,
+    Gonderici.Ad + ' ' + Gonderici.Soyad AS GondericiIsmi,
+    Alici.Ad + ' ' + Alici.Soyad AS AliciIsmi,
+    CikisSube.SubeAdi AS CikisSubesi,
+    VarisSube.SubeAdi AS VarisSubesi,
+    K.KargoTipi, K.Desi, K.Agirlik
+FROM Kargolar K
+INNER JOIN Musteriler Gonderici ON K.GondericiID = Gonderici.MusteriID
+INNER JOIN Musteriler Alici ON K.AliciID = Alici.MusteriID
+INNER JOIN Subeler CikisSube ON K.CikisSubeID = CikisSube.SubeID
+INNER JOIN Subeler VarisSube ON K.VarisSubeID = VarisSube.SubeID;
+
+GO
+
+-- =======================================================
+-- 2. SAKLI YORDAM (STORED PROCEDURE): Kargo Geçmişi Sorgulama
+-- =======================================================
+CREATE PROCEDURE sp_KargoGecmisiSorgula
+    @GelenTakipKodu VARCHAR(50)
+AS
+BEGIN
+    SELECT
+        KH.IslemTarihi AS [İşlem Zamanı],
+        K.TakipKodu AS [Takip Kodu],
+        S.SubeAdi AS [İşlem Yeri (Şube)],
+        P.Ad + ' ' + P.Soyad AS [İşlemi Yapan Personel],
+        D.DurumAdi AS [Kargo Durumu],
+        KH.Aciklama AS [Detay/Açıklama]
+    FROM KargoHareketleri KH
+    INNER JOIN Kargolar K ON KH.KargoID = K.KargoID
+    INNER JOIN Subeler S ON KH.IslemSubeID = S.SubeID
+    INNER JOIN Personeller P ON KH.IslemPersonelID = P.PersonelID
+    INNER JOIN KargoDurumTanimi D ON KH.DurumID = D.DurumID
+    WHERE K.TakipKodu = @GelenTakipKodu
+    ORDER BY KH.IslemTarihi DESC;
+END;
+
+GO
+
+-- =======================================================
+-- 3. TETİKLEYİCİ (TRIGGER): Teslim Edilmiş Kargoyu Koruma
+-- =======================================================
+CREATE TRIGGER trg_TeslimEdilmisKargoyuKoru
+ON KargoHareketleri
+AFTER INSERT
+AS
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM KargoHareketleri EskiKayitlar
+        INNER JOIN inserted YeniKayit ON EskiKayitlar.KargoID = YeniKayit.KargoID
+        WHERE EskiKayitlar.DurumID = 4 AND EskiKayitlar.HareketID < YeniKayit.HareketID
+    )
+    BEGIN
+        RAISERROR ('DİKKAT: Bu kargo zaten teslim edilmiş! İşlem yapılamaz.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END;

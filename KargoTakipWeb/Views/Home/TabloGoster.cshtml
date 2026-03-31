@@ -1,0 +1,60 @@
+﻿@using System.Data
+@model DataTable
+
+@{
+    ViewData["Title"] = ViewBag.AktifTablo + " Tablosu";
+    var tablolar = ViewBag.TabloListesi as List<string>;
+}
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white fw-bold">
+                🗄️ Veritabanı Tabloları
+            </div>
+            <div class="list-group list-group-flush">
+                @foreach (var tablo in tablolar)
+                {
+                    <a asp-controller="Home" asp-action="TabloGoster" asp-route-id="@tablo"
+                       class="list-group-item list-group-item-action @(ViewBag.AktifTablo == tablo ? "active bg-primary text-white fw-bold" : "")">
+                        📁 @tablo
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white fw-bold fs-5">
+                📄 @ViewBag.AktifTablo Kayıtları
+                <span class="badge bg-light text-dark float-end">Toplam Kayıt: @Model.Rows.Count</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                    <table class="table table-striped table-hover table-bordered mb-0 align-middle">
+                        <thead class="table-dark sticky-top">
+                            <tr>
+                                @foreach (DataColumn column in Model.Columns)
+                                {
+                                    <th>@column.ColumnName</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (DataRow row in Model.Rows)
+                            {
+                                <tr>
+                                    @foreach (DataColumn column in Model.Columns)
+                                    {
+                                        <td>@row[column].ToString()</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

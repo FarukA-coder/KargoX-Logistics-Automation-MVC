@@ -1,0 +1,40 @@
+﻿-- 5000 Adet Gerçekçi Müşteri Verisi Ekleme Döngüsü (DML)
+
+DECLARE @Sayac INT = 1;
+DECLARE @TCNo VARCHAR(11);
+DECLARE @RastgeleAd VARCHAR(50);
+DECLARE @RastgeleSoyad VARCHAR(50);
+DECLARE @Rand INT;
+
+PRINT 'Müşteri ekleme işlemi başladı...';
+
+WHILE @Sayac <= 5000
+BEGIN
+    SET @TCNo = CAST(50000000000 + @Sayac AS VARCHAR(11));
+
+    SET @Rand = ABS(CHECKSUM(NEWID())) % 10;
+    SET @RastgeleAd = CASE @Rand 
+        WHEN 0 THEN 'Ahmet' WHEN 1 THEN 'Mehmet' WHEN 2 THEN 'Ayşe' 
+        WHEN 3 THEN 'Fatma' WHEN 4 THEN 'Mustafa' WHEN 5 THEN 'Zeynep' 
+        WHEN 6 THEN 'Ali' WHEN 7 THEN 'Elif' WHEN 8 THEN 'Hasan' ELSE 'Merve' END;
+
+    SET @Rand = ABS(CHECKSUM(NEWID())) % 10;
+    SET @RastgeleSoyad = CASE @Rand 
+        WHEN 0 THEN 'Yılmaz' WHEN 1 THEN 'Kaya' WHEN 2 THEN 'Demir' 
+        WHEN 3 THEN 'Çelik' WHEN 4 THEN 'Şahin' WHEN 5 THEN 'Yıldız' 
+        WHEN 6 THEN 'Yıldırım' WHEN 7 THEN 'Öztürk' WHEN 8 THEN 'Aydın' ELSE 'Özdemir' END;
+
+    INSERT INTO Musteriler (TC_No, Ad, Soyad, Telefon, Adres, E_Posta)
+    VALUES (
+        @TCNo,
+        @RastgeleAd,
+        @RastgeleSoyad,
+        '05' + CAST(ABS(CHECKSUM(NEWID())) % 90000000 + 10000000 AS VARCHAR),
+        'İstanbul, Cadde No: ' + CAST(@Sayac AS VARCHAR),
+        LOWER(@RastgeleAd) + '.' + LOWER(@RastgeleSoyad) + CAST(@Sayac AS VARCHAR) + '@kargox.com'
+    );
+
+    SET @Sayac = @Sayac + 1;
+END
+
+PRINT '5000 Gerçekçi Müşteri Başarıyla Eklendi!';
